@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Check Flutter') {
+            steps {
+                bat '"C:\\JenkinsTools\\flutter\\bin\\flutter.bat" --version'
+            }
+        }
+
+        stage('Enable Web') {
+            steps {
+                bat '"C:\\JenkinsTools\\flutter\\bin\\flutter.bat" config --enable-web'
+            }
+        }
+
+        stage('Get Dependencies') {
+            steps {
+                bat '"C:\\JenkinsTools\\flutter\\bin\\flutter.bat" pub get'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                bat '"C:\\JenkinsTools\\flutter\\bin\\flutter.bat" test'
+            }
+        }
+
+        stage('Build Web') {
+            steps {
+                bat '"C:\\JenkinsTools\\flutter\\bin\\flutter.bat" build web --release'
+            }
+        }
+    }
+
+    post {
+        success {
+            archiveArtifacts artifacts: 'build\\web\\**',
+                             allowEmptyArchive: false
+        }
+    }
+}
